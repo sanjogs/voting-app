@@ -15,9 +15,16 @@ module.exports = function (app, passport) {
 
 	var clickHandler = new ClickHandler();
 
+	app.set('view engine','ejs');
+	app.set('views','./app/views/')
 	app.route('/')
 		.get(isLoggedIn, function (req, res) {
 			res.sendFile(path + '/public/index.html');
+		});
+	app.route('/home')
+		.get(isLoggedIn,function (req, res) {
+			res.render('home',{pageTitle:'Home',
+							   userName:req.user.github.displayName});
 		});
 
 	app.route('/login')
