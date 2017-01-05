@@ -2,6 +2,7 @@
 
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+var PollHandler = require(path + '/app/controllers/pollHandler.js');
 
 module.exports = function (app, passport) {
 
@@ -14,19 +15,27 @@ module.exports = function (app, passport) {
 	}
 
 	var clickHandler = new ClickHandler();
-
+	var pollHandler = new PollHandler();
+	
 	app.set('view engine','ejs');
 	app.set('views','./app/views/')
+	
 	app.route('/')
 		.get(isLoggedIn, function (req, res) {
 			res.sendFile(path + '/public/index.html');
 		});
+		
 	app.route('/home')
-		.get(isLoggedIn,function (req, res) {
-			res.render('home',{pageTitle:'Home',
-							   userName:req.user.github.displayName});
+		.get(function (req, res) {
+			res.render('home',{
+							   pageTitle:'Home',
+							   isLoggedIn: req.isAuthenticated(),
+							   userName:req.isAuthenticated()?req.user.github.displayName:'',
+							   polls:pollHandler.getPolls(),
+							   });
 		});
 
+				
 	app.route('/login')
 		.get(function (req, res) {
 			res.sendFile(path + '/public/login.html');
