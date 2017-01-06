@@ -11,8 +11,23 @@
     	</header>
         <main>
             <div class="container">
-		        <h1>Poll</h1>
+		        <h1>Create Poll</h1>
 		     
+		       	<div class="row">
+		       		<div class="col-md-6">
+	       			 <form action="/api/poll" method="post">
+                            <label for="question">Question</label>
+                            <input type="text" class="form-control" id="question" name="question">
+                       
+                            <label for="choices">Answers</label>
+                            <input type="text" class="form-control" id="choices" name="choices">
+                        <hr>
+                        <button type="submit" class="btn btn-primary" id="test">Save</button>
+                    </form>
+		       	</div>
+		       </div>
+		        
+		        
 		        
 		    </div>
         </main>

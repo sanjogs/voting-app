@@ -13,7 +13,6 @@
             <div class="container">
 		        <h1>Home</h1>
 		     
-		        
 		       <% if(isLoggedIn) { %>
 	    	    <a class='btn btn-primary btn-lg'>
 		        	<i class='fa fa-plus fa-fw'></i>
@@ -29,18 +28,18 @@
 	  
 		        
 		        <table class='table table-striped table-hover'>
-		        <% polls.data.forEach(function(poll) { %>
+		        <% polls.forEach(function(poll) { %>
 		        		<tr>
 				        	<td>
-				        		<a href='#' style='display:block;width:100%;height:100%'>		        		
+				        		<a href='/vote/2' style='display:block;width:100%;height:100%'>		        		
 				        		 <%= poll.question %>
 				        		<div>
-				        		 	<em class='text-muted'> - <%= poll.createdBy %> </em>
+				        		 	<em class='text-muted'> - <%= poll.createdby %> </em>
 				        		</div>
 			        		</a>
 				        	</td>
 				        	<td width="50px" style='vertical-align:middle;'>
-				        		<a href='#'>
+				        		<a href='/poll/2'>
 				        			<i class='fa fa-edit fa-lg'></i>
 				        		</a>
 				        	</td>
