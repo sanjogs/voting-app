@@ -15,10 +15,14 @@ function PollHandler(){
     };
     
     //get individual poll for modifying or voting
-    this.getPoll=function(id)
-    {
-        return {id:id,question:'first',
-                choices:['a', 'b']};
+    this.getPoll=function(id,callback)
+    {Poll.findOne({_id:id},function(err, data){
+        
+         if(err) return callback(null);
+         
+        callback(null, data);
+    })
+        
     };
     
     //vote for a poll

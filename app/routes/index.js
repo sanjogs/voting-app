@@ -44,34 +44,55 @@ module.exports = function (app, passport) {
 
 	app.route('/vote/:id')
 	.get(function(req,res){
-		var voteId=req.params.id;
+		var pollId=req.params.id;
 		res.render('vote',{pageTitle:'Vote',
 							   isLoggedIn: req.isAuthenticated(),
 							   userName:req.isAuthenticated()?req.user.github.displayName:'',
-							   poll:pollHandler.getPoll(voteId),
+							   poll:pollHandler.getPoll(pollId),
 							   });
 	})
 
-	app.route('/poll/:id')
+	app.route('/poll/')
 	.get(isLoggedIn,function(req,res){
-		var voteId=req.params.id;
+		var pollId=req.params.id;
 		res.render('poll',{pageTitle:'Edit Poll',
 							   isLoggedIn: req.isAuthenticated(),
 							   userName:req.isAuthenticated()?req.user.github.displayName:'',
-							   poll:pollHandler.getPoll(voteId),
+							   poll:null,
 							   });
+	});
+	app.route('/poll/:id')
+	.get(isLoggedIn,function(req,res){
+		var pollId=req.params.id;
+		
+		pollHandler.getPoll(pollId,function(err,data){
+				if (err) throw  err;
+				res.render('poll',{pageTitle:'Edit Poll',
+							   isLoggedIn: req.isAuthenticated(),
+							   userName:req.isAuthenticated()?req.user.github.displayName:'',
+							   poll:data,
+							   });
+		});
 	});
 	
 	app.route('/api/poll')
 	   .post(isLoggedIn,function(req,res){
-		
+	console.log(req.body);
 		var poll = new Poll();
 		
 		poll.question=req.body.question;
-		poll.choices=req.body.choices;
+		poll.choices=JSON.stringify(req.body.choice);
 		poll.createdby=req.user._id;
-	
-	    poll.save();
+	    poll.createdbyname=req.user.github.displayName;
+	    poll.votes=[];
+	    poll.save(function(err,newpoll){
+	    	if(err) {
+	    		res.status(500).send('Oops! something went worng. Poll not saved.')
+	    	}
+	    
+	    	res.redirect('/poll/' + newpoll._id);
+	    	
+	    });
 	});
 				
 	app.route('/login')

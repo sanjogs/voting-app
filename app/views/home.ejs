@@ -38,16 +38,16 @@
 				        		</div>
 			        		</a>
 				        	</td>
-				        	<td width="50px" style='vertical-align:middle;'>
-				        		<a href='/poll/2'>
+				        	<% if(isLoggedIn){%>
+				        	<td width="50px" style='vertical-align:middle;' >
+				        		<a href='/poll/<%= poll._id %>'>
 				        			<i class='fa fa-edit fa-lg'></i>
 				        		</a>
 				        	</td>
+				        	<%}%>
 			        	</tr>	
 		        <% }); %>
 		        </table>
-		        
-		
 		    </div>
         </main>
 	</body>

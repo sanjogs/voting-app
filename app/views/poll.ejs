@@ -17,18 +17,23 @@
 		       		<div class="col-md-6">
 	       			 <form action="/api/poll" method="post">
                             <label for="question">Question</label>
-                            <input type="text" class="form-control" id="question" name="question">
+                            <input type="text" value='<%= poll && poll.question%>'
+                            class="form-control" id="question" name="question" placeholder="Enter poll question">
                        
-                            <label for="choices">Answers</label>
-                            <input type="text" class="form-control" id="choices" name="choices">
+                            <label for="choices">Choices</label>
+                             <% var choiceCount=3;%>
+                             
+	                         <% for (var i = 0; i < choiceCount; i++) {
+	                         	var choice=JSON.parse(poll.choices)%>
+	                            <input type="text" value='<%= choice[i].text%>'
+	                            class="form-control" id="choice[<%= i %>]" name="choice[<%= i %>][text]" placeholder="Enter choice <%= i+1 %>">
+	                            <br/>
+	                            <% } %>
                         <hr>
                         <button type="submit" class="btn btn-primary" id="test">Save</button>
                     </form>
-		       	</div>
+		       		</div>
 		       </div>
-		        
-		        
-		        
 		    </div>
         </main>
 	</body>
