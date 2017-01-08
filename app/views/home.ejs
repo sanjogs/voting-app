@@ -14,7 +14,7 @@
 		        <h1>Home</h1>
 		     
 		       <% if(isLoggedIn) { %>
-	    	    <a class='btn btn-primary btn-lg'>
+	    	    <a class='btn btn-primary btn-lg' href='/poll'>
 		        	<i class='fa fa-plus fa-fw'></i>
 		        	<span>Create Poll</span>
 	        	</a>
@@ -24,30 +24,38 @@
 	        	<hr/>
 		        <% } %>
 		        
-		        <h3>Polls</h3>
+		        
 	  
 		        
+		        <% if (polls.length) { %>
+		         <p class=lead> Select a poll below to vote</p>
 		        <table class='table table-striped table-hover'>
 		        <% polls.forEach(function(poll) { %>
 		        		<tr>
 				        	<td>
-				        		<a href='/vote/2' style='display:block;width:100%;height:100%'>		        		
+				        		<a href='/vote?id=<%= poll._id %>' style='display:block;width:100%;height:100%'>		        		
 				        		 <%= poll.question %>
 				        		<div>
-				        		 	<em class='text-muted'> - <%= poll.createdby %> </em>
+				        		 	<em class='text-muted'> - <%= poll.createdbyname %> </em>
 				        		</div>
 			        		</a>
 				        	</td>
 				        	<% if(isLoggedIn){%>
 				        	<td width="50px" style='vertical-align:middle;' >
-				        		<a href='/poll/<%= poll._id %>'>
+				        		<a href='/poll?id=<%= poll._id %>'>
 				        			<i class='fa fa-edit fa-lg'></i>
 				        		</a>
 				        	</td>
 				        	<%}%>
 			        	</tr>	
+		       
 		        <% }); %>
+		       
 		        </table>
+		        
+		        <% } else { %>
+		        <p class=lead> There are no polls created yet. Please login to create one.</p>
+		        <% }%>
 		    </div>
         </main>
 	</body>

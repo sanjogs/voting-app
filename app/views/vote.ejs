@@ -13,10 +13,16 @@
             <div class="container">
 		        <h1>Vote!</h1>
 		     
-		       <h3> <%- poll.question %></h3>
-		       
-		       <input type='radio' name='choices' value='1'>
-			   
+		     <form action="/vote?id=<%= poll && poll._id %>" method="post">
+		     	   <h3> <%= poll.question %></h3>
+			       <% poll.choices.forEach(function(choice,idx){%>
+			    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= idx %>'>
+			    	   <label for='choice[<%= idx %>]'><%= choice %></label>
+						<br/>
+			       <% }) %>
+			       	  <hr>
+                <button type="submit" class="btn btn-primary" id="btn-vote">Save</button>
+            </form>  
 		    </div>
         </main>
 	</body>

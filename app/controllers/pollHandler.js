@@ -1,47 +1,47 @@
 'use strict';
 
-function PollHandler(){
+function PollHandler() {
     var Poll = require('../models/poll.js');
-    
-    this.getPolls=function(callback){
-      var allPolls=[];
-     
-      //get all polls or polls filtered by user
-       Poll.find({}, function (err, polls) {
-          if(err) return callback(null);
-           callback(null,polls);
-       });
-       
+
+    this.getPolls = function(callback) {
+
+
+        //get all polls or polls filtered by user
+        Poll.find({}, function(err, polls) {
+            if (err) return callback(null);
+            callback(null, polls);
+        });
+
     };
-    
+
     //get individual poll for modifying or voting
-    this.getPoll=function(id,callback)
-    {Poll.findOne({_id:id},function(err, data){
-        
-         if(err) return callback(null);
-         
-        callback(null, data);
-    })
-        
+    this.getPoll = function(id, callback) {
+        Poll.findOne({
+            _id: id
+        }, function(err, data) {
+            if (err) return callback(null);
+            if (callback) {
+                callback(null, data);
+            }
+
+        });
+
     };
-    
+
     //vote for a poll
-    this.vote=function(pollid, voterip)
-    {
-        
+    this.vote = function(pollid, voterip) {
+
     };
-    
+
     //create a poll
-    this.savePoll=function(question,user)
-    {
-        
+    this.savePoll = function(question, user) {
+
     };
-    
+
     //create poll choice
-    this.saveChoice=function(poll, choice)
-    {
-        
+    this.saveChoice = function(poll, choice) {
+
     };
 }
 
-module.exports=PollHandler;
+module.exports = PollHandler;

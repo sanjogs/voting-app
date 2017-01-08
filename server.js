@@ -8,7 +8,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 
 var app = express();
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended:true}));
 require('dotenv').load();
 require('./app/config/passport')(passport);
 
