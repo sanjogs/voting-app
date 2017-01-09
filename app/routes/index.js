@@ -45,22 +45,54 @@ module.exports = function(app, passport) {
 	app.route('/vote')
 		.get(function(req, res) {
 			var pollId = req.query.id;
-
+	
 			pollHandler.getPoll(pollId, function(err, poll) {
 				if (err) throw err;
-
+			
+					var hasvoted = false;
+					if(poll.voterIP.indexOf(req.headers['x-forwarded-for'])>-1)
+					{
+					 hasvoted=true;
+					}
+	
 				res.render('vote', {
 					pageTitle: 'Vote',
 					isLoggedIn: req.isAuthenticated(),
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
-					poll: poll
+					poll: poll,
+					hasvoted:hasvoted
 				});
 			});
-
-
 		})
 		.post(function(req, res) {
-		    console.log(req.body);
+			//check if user already voted
+			Poll.findOne({
+				_id: req.query.id,
+				voterIP: req.headers['x-forwarded-for']
+			}).exec(function(err, doc) {
+				if (err) throw err;
+				if (doc) {
+					res.status(400).send('You already voted once.');
+				}
+			});
+
+			Poll.findOneAndUpdate({
+					_id: req.query.id,
+					'choices._id': req.body.choice
+				}, {
+					$inc: {
+						'choices.$.votecount': 1
+					},
+					$push: {
+						'voterIP': req.headers['x-forwarded-for']
+					}
+				},
+				function(err, doc) {
+					if (err) throw err;
+
+					//reditect to same page . eventually this will show chart
+					res.redirect('/vote?id=' + req.query.id);
+				});
 		});
 
 
@@ -118,16 +150,32 @@ module.exports = function(app, passport) {
 				//create new
 				var poll = new Poll();
 
-				console.log(req.body);
+
+				var choices = req.body.choice.map(function(c) {
+
+					if (c.trim()) {
+						return {
+							choice: c.trim(),
+							votecount: 0,
+							createdby: req.user._id
+						};
+					}
+					else {
+						return null;
+					}
+				});
+				choices = choices.filter(function(c) {
+					return c != null;
+				});
 
 				poll.question = req.body.question;
-				poll.choices = req.body.choice;
+				poll.choices = choices;
 				poll.createdby = req.user._id;
 				poll.createdbyname = req.user.github.displayName;
 				poll.votes = [];
 				poll.save(function(err, doc) {
 					if (err) {
-						res.status(500).send('Oops! something went worng. Poll not saved.')
+						res.status(500).end('Oops! something went worng. Poll not saved.');
 					}
 
 					res.redirect('/poll?id=' + doc._id);

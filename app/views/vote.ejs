@@ -12,23 +12,57 @@
         <main>
             <div class="container">
 		        <h1>Vote!</h1>
-		     
-		     <form action="/vote?id=<%= poll && poll._id %>" method="post">
-		     	   <h3> <%= poll.question %></h3>
-			       <% poll.choices.forEach(function(choice,idx){%>
-			    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= idx %>'>
-			    	   <label for='choice[<%= idx %>]'><%= choice %></label>
-						<br/>
-			       <% }) %>
-			       	  <hr>
-                <button type="submit" class="btn btn-primary" id="btn-vote">Save</button>
-            </form>  
-		    </div>
+				<div class="row">
+					<div class="col-md-6">
+						 <form action="/vote?id=<%= poll && poll._id %>" method="post">
+				     	   <h3> <%= poll.question %></h3>
+					       <% poll.choices.forEach(function(choice,idx){%>
+					    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= choice._id %>'>
+					    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
+					    	   <label ><%= choice['votecount'] %></label>
+								<br/>
+					       <% }) %>
+					       	  <hr>
+					       	   <% if (hasvoted){%>
+					       	   <span>You voted already</span>
+					       	   <% } else { %>
+		                	<button type="submit" class="btn btn-sucess" id="btn-vote">Vote</button>
+		                <% } %>
+		            </form>
+					</div>
+					<div class="col-md-6">
+						<div style='width:300px;height:300px;' class='pull-right'>
+					     <canvas id="votes-chart" ></canvas>
+					     </div>
+					</div>
+				</div>     
+		     </div>
         </main>
 	</body>
 	
     	
    	<% include ./partials/mainscripts.ejs %>
+  <script src="/chart.js/dist/Chart.min.js"></script>
+  <script>
 
+  var data =<%- JSON.stringify(poll)%>;
+
+  var chartData=data.choices.map(function(c){
+  	return c.votecount
+  });
+  var dataLabel= data.choices.map(function(c) {return c.choice;})
+  var dataColor=data.choices.map(function(c){
+  	return 'rgb(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' +Math.floor(Math.random()*255) + ')'; 
+  })
+
+  	var ctx = document.getElementById("votes-chart");
+
+  	var chartInstance = new Chart(ctx, {
+    type: 'pie',
+    data:{ datasets:[{data:chartData,backgroundColor:dataColor, label:'Vote'}],
+    		labels:dataLabel}
+	});
+  </script>
+  
 </html>
 

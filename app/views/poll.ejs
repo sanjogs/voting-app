@@ -23,16 +23,15 @@
                             <label for="choices">Choices</label>
                              <%
                              	var choice=(poll && poll.choices)?poll.choices:null
-                                var choiceCount=choice?choice.length:2;
-                                
+                                var choiceCount=choice?choice.length:4;
                              %>
                              
 	                         <% for (var i = 0; i < choiceCount; i++) {%>
-	                         
-	                            <input type="text" value='<%=choice && choice[i]%>'
+	                            <input type="text" value='<%=choice && choice[i]['choice']%>'
 	                            class="form-control" id="choice[<%= i %>]" name="choice[<%= i %>]" placeholder="Enter choice <%= i+1 %>">
 	                            <br/>
                             <% } %>
+                            <a title='Add choice'  onclick='addChoice();'><i class='fa fa-plus fa-lg'></i></a>
                         <hr>
                         <button type="submit" class="btn btn-primary" id="test">Save</button>
                     </form>
@@ -41,7 +40,11 @@
 		    </div>
         </main>
 	</body>
-	
+	<script>
+		var addChoice(){
+			
+		}
+	</script>
     	
    	<% include ./partials/mainscripts.ejs %>
 
