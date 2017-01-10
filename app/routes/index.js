@@ -76,23 +76,51 @@ module.exports = function(app, passport) {
 				}
 			});
 
-			Poll.findOneAndUpdate({
-					_id: req.query.id,
-					'choices._id': req.body.choice
+
+			if(req.body.choice=='0')
+			{
+				//user selected customchoice
+				Poll.findOneAndUpdate({
+					_id: req.query.id
 				}, {
-					$inc: {
-						'choices.$.votecount': 1
-					},
+				
 					$push: {
-						'voterIP': req.headers['x-forwarded-for']
+						'voterIP': req.headers['x-forwarded-for'],
+						'choices':{votecount:1,
+									choice:req.body.customchoice,
+									createdby:req.user._id
+						}
 					}
 				},
 				function(err, doc) {
 					if (err) throw err;
 
-					//reditect to same page . eventually this will show chart
+					//refresh
 					res.redirect('/vote?id=' + req.query.id);
 				});
+				
+			}
+			else
+			{
+			
+				Poll.findOneAndUpdate({
+						_id: req.query.id,
+						'choices._id': req.body.choice
+					}, {
+						$inc: {
+							'choices.$.votecount': 1
+						},
+						$push: {
+							'voterIP': req.headers['x-forwarded-for']
+						}
+					},
+					function(err, doc) {
+						if (err) throw err;
+	
+						//refresh
+						res.redirect('/vote?id=' + req.query.id);
+					});
+			}
 		});
 
 

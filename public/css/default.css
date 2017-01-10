@@ -1,4 +1,18 @@
+body
+{
+background-color: #eae9e9;
+    
+}
 main
 {
     margin-top: 51px;
+}
+
+.navbar {
+    background-color: #23474c;
+    border-color: #0f4148;
+}
+ .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+    color: #fff;
+    background-color: #0d313a!important;
 }

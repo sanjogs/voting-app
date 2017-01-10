@@ -13,25 +13,49 @@
             <div class="container">
 		        <h1>Vote!</h1>
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-8">
+						<div class="panel panel-default" style='margin-top:50px;'>
+							<div class="panel-body">
+								
+									<h3 style='display:table-cell;width:100%;'> <%= poll.question %></h3>
+									<a class='btn btn-info btn-block' style='display:table-cell;width:100px;'
+				                	href="https://twitter.com/intent/tweet?url=/vote?id=<%= poll._id %>&text=<%= poll.question %>"
+				                	target="_blank">
+				                		<i class='fa fa-twitter'>
+				                			Share
+				                		</i>
+				                	</a>
+		                	
 						 <form action="/vote?id=<%= poll && poll._id %>" method="post">
-				     	   <h3> <%= poll.question %></h3>
+				     	   
 					       <% poll.choices.forEach(function(choice,idx){%>
 					    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= choice._id %>'>
 					    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
-					    	   <label ><%= choice['votecount'] %></label>
 								<br/>
 					       <% }) %>
+					       
+					       <% if(isLoggedIn){ %>
+					       <input type='radio' id='choice[<%= poll.choices.length %>]' name='choice' value='0'>
+				    	   <label for='choice[<%= poll.choices.count  %>]'>Custom Option</label>
+					       <input type=text id='customchoice' name='customchoice' class=''>
+					       <% } %>
+					      
 					       	  <hr>
 					       	   <% if (hasvoted){%>
-					       	   <span>You voted already</span>
+					       	   <span>You have already voted for this poll</span><br/>
 					       	   <% } else { %>
-		                	<button type="submit" class="btn btn-sucess" id="btn-vote">Vote</button>
+		                	<button type="submit" class="btn btn-success" id="btn-vote btn-block">Vote!</button>
+		                
 		                <% } %>
+		                
+		                	
 		            </form>
+							</div>
+						</div>
+				
 					</div>
-					<div class="col-md-6">
-						<div style='width:300px;height:300px;' class='pull-right'>
+					<div class="col-md-4">
+						<div style='width:300px;height:300px;' >
 					     <canvas id="votes-chart" ></canvas>
 					     </div>
 					</div>
