@@ -18,8 +18,9 @@
 							<div class="panel-body">
 								
 									<h3 style='display:table-cell;width:100%;'> <%= poll.question %></h3>
+									
 									<a class='btn btn-info btn-block' style='display:table-cell;width:100px;'
-				                	href="https://twitter.com/intent/tweet?url=/vote?id=<%= poll._id %>&text=<%= poll.question %>"
+				                	href="https://twitter.com/intent/tweet?url=<%= shareUrl %>&text=<%= poll.question %>"
 				                	target="_blank">
 				                		<i class='fa fa-twitter'>
 				                			Share
@@ -28,28 +29,28 @@
 		                	
 						 <form action="/vote?id=<%= poll && poll._id %>" method="post">
 				     	   
-					       <% poll.choices.forEach(function(choice,idx){%>
-					    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= choice._id %>'>
-					    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
-								<br/>
-					       <% }) %>
-					       
-					       <% if(isLoggedIn){ %>
-					       <input type='radio' id='choice[<%= poll.choices.length %>]' name='choice' value='0'>
-				    	   <label for='choice[<%= poll.choices.count  %>]'>Custom Option</label>
-					       <input type=text id='customchoice' name='customchoice' class=''>
-					       <% } %>
-					      
-					       	  <hr>
-					       	   <% if (hasvoted){%>
-					       	   <span>You have already voted for this poll</span><br/>
-					       	   <% } else { %>
-		                	<button type="submit" class="btn btn-success" id="btn-vote btn-block">Vote!</button>
-		                
-		                <% } %>
-		                
+						       <% poll.choices.forEach(function(choice,idx){%>
+						    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= choice._id %>'>
+						    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
+									<br/>
+						       <% }) %>
+						       
+						       <% if(isLoggedIn){ %>
+						       <input type='radio' id='choice[<%= poll.choices.length %>]' name='choice' value='0'>
+					    	   <label for='choice[<%= poll.choices.count  %>]'>Custom Option</label>
+						       <input type=text id='customchoice' name='customchoice' class=''>
+						       <% } %>
+						      
+						       	  <hr>
+						       	   <% if (hasvoted){%>
+						       	   <span>You have already voted for this poll</span><br/>
+						       	   <% } else { %>
+			                	<button type="submit" class="btn btn-success" id="btn-vote btn-block">Vote!</button>
+				                
+				                <% } %>
+				                
 		                	
-		            </form>
+		          	  	</form>
 							</div>
 						</div>
 				

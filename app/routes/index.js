@@ -30,7 +30,7 @@ module.exports = function(app, passport) {
 	app.route('/home')
 		.get(function(req, res) {
 
-			pollHandler.getPolls(function(err, polls) {
+			pollHandler.getPolls(null,function(err, polls) {
 				if (err) throw err;
 
 				res.render('home', {
@@ -41,26 +41,39 @@ module.exports = function(app, passport) {
 				});
 			});
 		});
+	app.route('/mypolls')
+		.get(isLoggedIn,function(req, res) {
 
+			pollHandler.getPolls(req.user._id, function(err, polls) {
+				if (err) throw err;
+
+				res.render('mypolls', {
+					pageTitle: 'My Polls',
+					isLoggedIn: req.isAuthenticated(),
+					userName: req.isAuthenticated() ? req.user.github.displayName : '',
+					polls: polls,
+				});
+			});
+		});
 	app.route('/vote')
 		.get(function(req, res) {
 			var pollId = req.query.id;
-	
+
 			pollHandler.getPoll(pollId, function(err, poll) {
 				if (err) throw err;
-			
-					var hasvoted = false;
-					if(poll.voterIP.indexOf(req.headers['x-forwarded-for'])>-1)
-					{
-					 hasvoted=true;
-					}
-	
+
+				var hasvoted = false;
+				if (poll.voterIP.indexOf(req.headers['x-forwarded-for']) > -1) {
+					hasvoted = true;
+				}
+
 				res.render('vote', {
 					pageTitle: 'Vote',
 					isLoggedIn: req.isAuthenticated(),
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
 					poll: poll,
-					hasvoted:hasvoted
+					hasvoted: hasvoted,
+					shareUrl: req.protocol + '://' + req.get('host') + req.originalUrl
 				});
 			});
 		})
@@ -77,32 +90,31 @@ module.exports = function(app, passport) {
 			});
 
 
-			if(req.body.choice=='0')
-			{
+			if (req.body.choice == '0') {
 				//user selected customchoice
 				Poll.findOneAndUpdate({
-					_id: req.query.id
-				}, {
-				
-					$push: {
-						'voterIP': req.headers['x-forwarded-for'],
-						'choices':{votecount:1,
-									choice:req.body.customchoice,
-									createdby:req.user._id
-						}
-					}
-				},
-				function(err, doc) {
-					if (err) throw err;
+						_id: req.query.id
+					}, {
 
-					//refresh
-					res.redirect('/vote?id=' + req.query.id);
-				});
-				
+						$push: {
+							'voterIP': req.headers['x-forwarded-for'],
+							'choices': {
+								votecount: 1,
+								choice: req.body.customchoice,
+								createdby: req.user._id
+							}
+						}
+					},
+					function(err, doc) {
+						if (err) throw err;
+
+						//refresh
+						res.redirect('/vote?id=' + req.query.id);
+					});
+
 			}
-			else
-			{
-			
+			else {
+
 				Poll.findOneAndUpdate({
 						_id: req.query.id,
 						'choices._id': req.body.choice
@@ -116,7 +128,7 @@ module.exports = function(app, passport) {
 					},
 					function(err, doc) {
 						if (err) throw err;
-	
+
 						//refresh
 						res.redirect('/vote?id=' + req.query.id);
 					});
@@ -135,6 +147,7 @@ module.exports = function(app, passport) {
 					res.render('poll', {
 						pageTitle: 'Edit Poll',
 						isLoggedIn: req.isAuthenticated(),
+						userId: req.isAuthenticated() ? req.user._id : '',
 						userName: req.isAuthenticated() ? req.user.github.displayName : '',
 						poll: data,
 					});
@@ -152,6 +165,22 @@ module.exports = function(app, passport) {
 			}
 		})
 		.post(isLoggedIn, function(req, res) {
+			var choices = req.body.choice.map(function(c) {
+				if (c.choice.trim()) {
+					return {
+						choice: c.choice.trim(),
+						votecount:c.votecount || 0,
+						createdby: req.user._id
+					};
+				}
+				else {
+					return null;
+				}
+			});
+			
+			choices = choices.filter(function(c) {
+				return c != null;
+			});
 
 			var pollId = req.query.id;
 			if (pollId) {
@@ -160,41 +189,25 @@ module.exports = function(app, passport) {
 						_id: pollId
 					}, {
 						question: req.body.question,
-						choices: req.body.choice
+						choices: choices
 					}, {
-						new: true,
-						upsert: true
+						new: true
 					},
 					function(err, doc) {
 						if (err) {
-							res.status(500).send('Oops! something went worng when updating. Poll not saved.');
+							console.log(err);
+							res.status(500).end('Oops! something went worng when updating. Poll not saved.');
 						}
+						else{
 
 						res.redirect('/poll?id=' + doc._id);
-
+						}
 					});
 			}
 			else {
 				//create new
 				var poll = new Poll();
 
-
-				var choices = req.body.choice.map(function(c) {
-
-					if (c.trim()) {
-						return {
-							choice: c.trim(),
-							votecount: 0,
-							createdby: req.user._id
-						};
-					}
-					else {
-						return null;
-					}
-				});
-				choices = choices.filter(function(c) {
-					return c != null;
-				});
 
 				poll.question = req.body.question;
 				poll.choices = choices;
@@ -208,6 +221,19 @@ module.exports = function(app, passport) {
 
 					res.redirect('/poll?id=' + doc._id);
 
+				});
+			}
+		})
+		.delete(isLoggedIn, function(req, res) {
+			var pollId = req.query.id;
+			if (pollId) {
+				//update existing
+				Poll.findOneAndRemove({
+					_id: pollId
+				}, function(err, data) {
+					if (err) throw err;
+					
+					res.status(200).send();
 				});
 			}
 		});

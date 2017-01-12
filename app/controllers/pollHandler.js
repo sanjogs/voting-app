@@ -3,15 +3,23 @@
 function PollHandler() {
     var Poll = require('../models/poll.js');
 
-    this.getPolls = function(callback) {
-
-
-        //get all polls or polls filtered by user
-        Poll.find({}, function(err, polls) {
-            if (err) return callback(null);
-            callback(null, polls);
-        });
-
+    this.getPolls = function(userId,callback) {
+        if(userId)
+        {
+            //get  polls filtered by user
+            Poll.find({createdby:userId}, function(err, polls) {
+                if (err) return callback(null);
+                callback(null, polls);
+            });    
+        }
+        else
+        {
+            //get all polls
+            Poll.find({}, function(err, polls) {
+                if (err) return callback(null);
+                callback(null, polls);
+            });
+        }
     };
 
     //get individual poll for modifying or voting
