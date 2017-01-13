@@ -36,6 +36,7 @@ module.exports = function(app, passport) {
 				res.render('home', {
 					pageTitle: 'Home',
 					isLoggedIn: req.isAuthenticated(),
+					userId: req.isAuthenticated() ? req.user._id : '',
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
 					polls: polls,
 				});
@@ -70,6 +71,7 @@ module.exports = function(app, passport) {
 				res.render('vote', {
 					pageTitle: 'Vote',
 					isLoggedIn: req.isAuthenticated(),
+					userId: req.isAuthenticated() ? req.user._id : '',
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
 					poll: poll,
 					hasvoted: hasvoted,
@@ -147,8 +149,7 @@ module.exports = function(app, passport) {
 					res.render('poll', {
 						pageTitle: 'Edit Poll',
 						isLoggedIn: req.isAuthenticated(),
-						userId: req.isAuthenticated() ? req.user._id : '',
-						userName: req.isAuthenticated() ? req.user.github.displayName : '',
+					    userName: req.isAuthenticated() ? req.user.github.displayName : '',
 						poll: data,
 					});
 				});
@@ -165,11 +166,12 @@ module.exports = function(app, passport) {
 			}
 		})
 		.post(isLoggedIn, function(req, res) {
-			var choices = req.body.choice.map(function(c) {
-				if (c.choice.trim()) {
+			var allChoices=req.body.choices.split('\r\n');
+			var choices = allChoices.map(function(c) {
+				if (c.trim()) {
 					return {
-						choice: c.choice.trim(),
-						votecount:c.votecount || 0,
+						choice: c.trim(),
+						votecount:0,
 						createdby: req.user._id
 					};
 				}
@@ -181,48 +183,24 @@ module.exports = function(app, passport) {
 			choices = choices.filter(function(c) {
 				return c != null;
 			});
+		
+			//create new
+			var poll = new Poll();
 
-			var pollId = req.query.id;
-			if (pollId) {
-				//update existing
-				Poll.findOneAndUpdate({
-						_id: pollId
-					}, {
-						question: req.body.question,
-						choices: choices
-					}, {
-						new: true
-					},
-					function(err, doc) {
-						if (err) {
-							console.log(err);
-							res.status(500).end('Oops! something went worng when updating. Poll not saved.');
-						}
-						else{
+			poll.question = req.body.question;
+			poll.choices = choices;
+			poll.createdby = req.user._id;
+			poll.createdbyname = req.user.github.displayName;
+			poll.votes = [];
+			poll.save(function(err, doc) {
+				if (err) {
+					res.status(500).end('Oops! something went worng. Poll not saved.');
+				}
 
-						res.redirect('/poll?id=' + doc._id);
-						}
-					});
-			}
-			else {
-				//create new
-				var poll = new Poll();
+				res.redirect('/vote?id=' + doc._id);
 
-
-				poll.question = req.body.question;
-				poll.choices = choices;
-				poll.createdby = req.user._id;
-				poll.createdbyname = req.user.github.displayName;
-				poll.votes = [];
-				poll.save(function(err, doc) {
-					if (err) {
-						res.status(500).end('Oops! something went worng. Poll not saved.');
-					}
-
-					res.redirect('/poll?id=' + doc._id);
-
-				});
-			}
+			});
+			
 		})
 		.delete(isLoggedIn, function(req, res) {
 			var pollId = req.query.id;

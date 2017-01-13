@@ -17,3 +17,8 @@ main
     color: #fff;
     background-color: #0d313a!important;
 }
+
+.polls-list td>a
+{
+    text-decoration: none!important;
+}

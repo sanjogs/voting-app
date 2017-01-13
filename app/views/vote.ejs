@@ -14,7 +14,7 @@
 		        <h1>Vote!</h1>
 				<div class="row">
 					<div class="col-md-8">
-						<div class="panel panel-default" style='margin-top:50px;'>
+						<div class="panel panel-default">
 							<div class="panel-body">
 								
 									<h3 style='display:table-cell;width:100%;'> <%= poll.question %></h3>
@@ -48,6 +48,11 @@
 			                	<button type="submit" class="btn btn-success" id="btn-vote btn-block">Vote!</button>
 				                
 				                <% } %>
+				                <% if(poll && (poll.createdby.toString()===userId.toString())){ %>
+                        <a class='btn btn-danger pull-right' onclick='deletePoll();'>&nbsp;
+                        	<i class='fa fa-trash-o'></i>
+                        	Delete</a>
+                        <% } %>
 				                
 		                	
 		          	  	</form>
@@ -68,7 +73,19 @@
     	
    	<% include ./partials/mainscripts.ejs %>
   <script src="/chart.js/dist/Chart.min.js"></script>
-  <script>
+	<script type="text/javascript" src="common/ajax-functions.js"></script>
+	<script>
+		function deletePoll(){
+			
+			if(confirm('Are you sure you would like to delete this poll? YOU CANNOT REVERT THIS ACTION'))
+			{
+				ajaxFunctions.ajaxRequest('DELETE', '/poll?id=<%= (poll && poll._id) %>', function (data) {
+			        window.location.replace(window.location.protocol + "//" + window.location.host + '/home');
+			      });
+			}
+			
+		}
+
 
   var data =<%- JSON.stringify(poll)%>;
 

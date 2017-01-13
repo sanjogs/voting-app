@@ -15,52 +15,31 @@
 		     
 		       	<div class="row">
 		       		<div class="col-md-6">
-	       			 <form action="/poll?id=<%= poll && poll._id %>" method="post">
+		       			<div class="panel panel-default">
+		       				<div class='panel-body'>
+	       			 <form action="/poll" method="post">
                             <label for="question">Question</label>
                             <input type="text" value='<%= poll && poll.question%>'
                             class="form-control" id="question" name="question" placeholder="Enter poll question">
                        
                             <label for="choices">Choices</label>
-                             <%
-                             	var choice=(poll && poll.choices)?poll.choices:null
-                                var choiceCount= choice && choice.length ||4;
-                             %>
-                             
-	                         <% for (var i = 0; i < choiceCount; i++) {%>
-	                            <input type="text" value='<%=choice && choice[i]['choice']%>'
-	                            class="form-control" id="choice[<%= i %>][choice]" name="choice[<%= i %>][choice]" placeholder="Enter choice <%= i+1 %>">
-	                            <input type="hidden" id="choice[<%= i %>][votecount]" name="choice[<%= i %>][votecount]" value='<%= (choice && choice[i]['votecount']) %>'>
-	                            <br/>
-                            <% } %>
+                            <textarea class='form-control' name='choices' placeholder='enter choices separated by line breaks' rows='4'></textarea>
+	                       
                         <hr>
                         <button type="submit" class="btn btn-primary" id="test">
                         	<i class='fa fa-save'></i>
                         	Save</button>
                        
-                       <% if(poll && (poll.createdby.toString()===userId.toString())){ %>
-                        <a class='btn btn-danger pull-right' onclick='deletePoll();'>&nbsp;
-                        	<i class='fa fa-trash-o'></i>
-                        	Delete</a>
-                        <% } %>
+                       
                     </form>
+                    </div>
+                    </div>
 		       		</div>
 		       </div>
 		    </div>
         </main>
 	</body>
-	<script type="text/javascript" src="common/ajax-functions.js"></script>
-	<script>
-		function deletePoll(){
-			
-			if(confirm('Are you sure you would like to delete this poll? YOU CANNOT REVERT THIS ACTION'))
-			{
-				ajaxFunctions.ajaxRequest('DELETE', '/poll?id=<%= (poll && poll._id) %>', function (data) {
-			        window.location.replace(window.location.protocol + "//" + window.location.host + '/home');
-			      });
-			}
-			
-		}
-	</script>
+
     	
    	<% include ./partials/mainscripts.ejs %>
 
