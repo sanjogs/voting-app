@@ -30,7 +30,7 @@
 						 <form action="/vote?id=<%= poll && poll._id %>" method="post">
 				     	   <fieldset <%= hasvoted?'disabled':'' %>>
 						       <% poll.choices.forEach(function(choice,idx){%>
-						    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= choice._id %>'>
+						    	   <input type='radio' id='choice[<%= idx %>]' required name='choice' value='<%= choice._id %>'>
 						    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
 									<br/>
 						       <% }) %>

@@ -20,10 +20,10 @@
 	       			 <form action="/poll" method="post">
                             <label for="question">Question</label>
                             <input type="text" value='<%= poll && poll.question%>'
-                            class="form-control" id="question" name="question" placeholder="Enter poll question">
+                            class="form-control" id="question" name="question" required placeholder="Enter poll question">
                        
                             <label for="choices">Choices</label>
-                            <textarea class='form-control' name='choices' placeholder='enter choices separated by line breaks' rows='4'></textarea>
+                            <textarea class='form-control' name='choices' required placeholder='enter choices separated by line breaks' rows='4'></textarea>
 	                       
                         <hr>
                         <button type="submit" class="btn btn-primary" id="test">
