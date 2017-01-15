@@ -27,11 +27,11 @@ module.exports = function(app, passport) {
 	app.route('/home')
 		.get(function(req, res) {
 
-			pollHandler.getPolls(null,function(err, polls) {
+			pollHandler.getPolls(null, function(err, polls) {
 				if (err) throw err;
 
 				res.render('home', {
-					pageTitle: 'Home',
+					pageTitle: 'Home - FCC Voting App',
 					isLoggedIn: req.isAuthenticated(),
 					userId: req.isAuthenticated() ? req.user._id : '',
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
@@ -39,20 +39,22 @@ module.exports = function(app, passport) {
 				});
 			});
 		});
+
 	app.route('/mypolls')
-		.get(isLoggedIn,function(req, res) {
+		.get(isLoggedIn, function(req, res) {
 
 			pollHandler.getPolls(req.user._id, function(err, polls) {
 				if (err) throw err;
 
 				res.render('mypolls', {
-					pageTitle: 'My Polls',
+					pageTitle: 'My Polls - FCC Voting App',
 					isLoggedIn: req.isAuthenticated(),
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
 					polls: polls,
 				});
 			});
 		});
+
 	app.route('/vote')
 		.get(function(req, res) {
 			var pollId = req.query.id;
@@ -66,7 +68,7 @@ module.exports = function(app, passport) {
 				}
 
 				res.render('vote', {
-					pageTitle: 'Vote',
+					pageTitle: 'Vote - FCC Voting App',
 					isLoggedIn: req.isAuthenticated(),
 					userId: req.isAuthenticated() ? req.user._id : '',
 					userName: req.isAuthenticated() ? req.user.github.displayName : '',
@@ -90,7 +92,7 @@ module.exports = function(app, passport) {
 
 
 			if (req.body.choice == '0') {
-				//user selected customchoice
+				//user selected customchoice-add choice and vote
 				Poll.findOneAndUpdate({
 						_id: req.query.id
 					}, {
@@ -110,10 +112,9 @@ module.exports = function(app, passport) {
 						//refresh
 						res.redirect('/vote?id=' + req.query.id);
 					});
-
 			}
 			else {
-
+				//find choice and increase vote count
 				Poll.findOneAndUpdate({
 						_id: req.query.id,
 						'choices._id': req.body.choice
@@ -137,38 +138,23 @@ module.exports = function(app, passport) {
 
 	app.route('/poll')
 		.get(isLoggedIn, function(req, res) {
-			var pollId = req.query.id;
-			if (pollId) {
-				//edit existing
-				pollHandler.getPoll(pollId, function(err, data) {
-					if (err) throw err;
-
-					res.render('poll', {
-						pageTitle: 'Edit Poll',
-						isLoggedIn: req.isAuthenticated(),
-					    userName: req.isAuthenticated() ? req.user.github.displayName : '',
-						poll: data,
-					});
-				});
-
-			}
-			else {
-				//create new
-				res.render('poll', {
-					pageTitle: 'Create Poll',
-					isLoggedIn: req.isAuthenticated(),
-					userName: req.isAuthenticated() ? req.user.github.displayName : '',
-					poll: null,
-				});
-			}
+			//render page to create new poll
+			res.render('poll', {
+				pageTitle: 'Create Poll - FCC Voting App',
+				isLoggedIn: req.isAuthenticated(),
+				userName: req.isAuthenticated() ? req.user.github.displayName : '',
+				poll: null,
+			});
 		})
 		.post(isLoggedIn, function(req, res) {
-			var allChoices=req.body.choices.split('\r\n');
+			//split multiline choices
+			var allChoices = req.body.choices.split('\r\n');
+			//create choice object
 			var choices = allChoices.map(function(c) {
 				if (c.trim()) {
 					return {
 						choice: c.trim(),
-						votecount:0,
+						votecount: 0,
 						createdby: req.user._id
 					};
 				}
@@ -176,11 +162,11 @@ module.exports = function(app, passport) {
 					return null;
 				}
 			});
-			
+			//filter out empty choices
 			choices = choices.filter(function(c) {
 				return c != null;
 			});
-		
+
 			//create new
 			var poll = new Poll();
 
@@ -193,21 +179,19 @@ module.exports = function(app, passport) {
 				if (err) {
 					res.status(500).end('Oops! something went worng. Poll not saved.');
 				}
-
+				//redirect to voting screen
 				res.redirect('/vote?id=' + doc._id);
-
 			});
-			
 		})
 		.delete(isLoggedIn, function(req, res) {
 			var pollId = req.query.id;
 			if (pollId) {
-				//update existing
+				//find and remove poll
 				Poll.findOneAndRemove({
 					_id: pollId
 				}, function(err, data) {
 					if (err) throw err;
-					
+					//send ok 
 					res.status(200).send();
 				});
 			}
@@ -231,7 +215,6 @@ module.exports = function(app, passport) {
 	app.route('/auth/github/callback')
 		.get(passport.authenticate('github', {
 			successRedirect: '/Home',
-			failureRedirect: '/login'
+			failureRedirect: '/Home'
 		}));
-
 };

@@ -22,7 +22,7 @@ app.use(express.static(process.cwd() + '/bower_components'));
 
 
 app.use(session({
-	secret: 'secretClementine',
+	secret: 'voteApp',
 	resave: false,
 	saveUninitialized: true
 }));

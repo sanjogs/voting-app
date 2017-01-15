@@ -48,7 +48,9 @@
 				       
 			         </div>
 		        <% } else { %>
-			        <p class=lead> There are no polls created yet. Please login to create one.</p>
+			        <p class=lead> There are no polls created yet.
+			        </p>
+			        <%= isLoggedIn?'':'Please login to create one.'%> 
 		        <% } %>
 		    </div>
         </main>
