@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<% include ./partials/head.ejs %>
+	</head>
+
+	<body>
+    	<header>
+    		<% include ./partials/header.ejs %>
+    	</header>
+        <main>
+            <div class="container">
+		        <h1>My Polls</h1>
+		     
+		       <% if(isLoggedIn) { %>
+	    	    <a class='btn btn-primary btn-lg' href='/poll'>
+		        	<i class='fa fa-plus fa-fw'></i>
+		        	<span>Create Poll</span>
+	        	</a>
+	        
+	        	<hr/>
+		        <% } %>
+		        
+		        <% if (polls.length) { %>
+			        
+			        <div class="panel panel-default">
+				       	
+				       
+				        <table class='table table-hover polls-list'>
+				        <% polls.forEach(function(poll) { %>
+				        		<tr>
+						        	<td>
+						        		<a href='/vote?id=<%= poll._id %>' style='display:block;width:100%;height:100%'>		        		
+						        		 <%= poll.question %>
+   					        		</a>
+						        	</td>
+						        </tr>	
+				        <% }); %>
+				       
+				        </table>
+				       
+			         </div>
+		        <% } else { %>
+			        <p class=lead> There are no polls created yet. </p>
+		        <% } %>
+		    </div>
+        </main>
+	</body>
+	
+   	<% include ./partials/mainscripts.ejs %>
+</html>
+
