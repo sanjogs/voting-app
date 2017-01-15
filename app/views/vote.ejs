@@ -28,7 +28,7 @@
 				                	</a>
 		                	
 						 <form action="/vote?id=<%= poll && poll._id %>" method="post">
-				     	   
+				     	   <fieldset <%= hasvoted?'disabled':'' %>>
 						       <% poll.choices.forEach(function(choice,idx){%>
 						    	   <input type='radio' id='choice[<%= idx %>]' name='choice' value='<%= choice._id %>'>
 						    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
@@ -40,7 +40,7 @@
 					    	   <label for='choice[<%= poll.choices.count  %>]'>Custom Option</label>
 						       <input type=text id='customchoice' name='customchoice' class=''>
 						       <% } %>
-						      
+						      </fieldset>
 						       	  <hr>
 						       	   <% if (hasvoted){%>
 						       	   <span>You have already voted for this poll</span><br/>
@@ -98,7 +98,7 @@
   })
 
   	var ctx = document.getElementById("votes-chart");
-
+Chart.defaults.global.legend.position='bottom';
   	var chartInstance = new Chart(ctx, {
     type: 'pie',
     data:{ datasets:[{data:chartData,backgroundColor:dataColor, label:'Vote'}],
