@@ -34,13 +34,3 @@ main
 	width: 225px;
 	padding: 7px 5px;
 }
-
-.btn p {
-	margin: 8px 0 0 0;
-	padding: 0;
-}
-
-.btn > img {
-	float: left;
-	margin-left: 10px
-}

@@ -30,14 +30,15 @@
 						 <form action="/vote?id=<%= poll && poll._id %>" method="post">
 				     	   <fieldset <%= hasvoted?'disabled':'' %>>
 						       <% poll.choices.forEach(function(choice,idx){%>
-						    	   <input type='radio' id='choice[<%= idx %>]' required name='choice' value='<%= choice._id %>'>
+						    	   <input type='radio' id='choice[<%= idx %>]' required name='choice' value='<%= choice._id %>'
+						    	   onclick='choiceClicked(this);'>
 						    	   <label for='choice[<%= idx %>]'><%= choice['choice'] %></label>
 									<br/>
 						       <% }) %>
 						       
 						       <% if(isLoggedIn){ %>
-						       <input type='radio' id='choice[<%= poll.choices.length %>]' name='choice' value='0'>
-					    	   <label for='choice[<%= poll.choices.count  %>]'>Custom Option</label>
+						       <input type='radio' id='choice[<%= poll.choices.length %>]' name='choice' value='0' onclick='customChoiceClicked(this);'>
+					    	   <label for='choice[<%= poll.choices.length  %>]'>Custom Option</label>
 						       <input type=text id='customchoice' name='customchoice' class=''>
 						       <% } %>
 						      </fieldset>
@@ -53,8 +54,6 @@
                         	<i class='fa fa-trash-o'></i>
                         	Delete</a>
                         <% } %>
-				                
-		                	
 		          	  	</form>
 							</div>
 						</div>
@@ -72,19 +71,33 @@
 	
     	
    	<% include ./partials/mainscripts.ejs %>
-  <script src="/chart.js/dist/Chart.min.js"></script>
+   	
+ 	<script src="/chart.js/dist/Chart.min.js"></script>
 	<script type="text/javascript" src="common/ajax-functions.js"></script>
 	<script>
-		function deletePoll(){
-			
-			if(confirm('Are you sure you would like to delete this poll? YOU CANNOT REVERT THIS ACTION'))
-			{
-				ajaxFunctions.ajaxRequest('DELETE', '/poll?id=<%= (poll && poll._id) %>', function (data) {
-			        window.location.replace(window.location.protocol + "//" + window.location.host + '/home');
-			      });
-			}
-			
+	
+	function customChoiceClicked()
+	{
+		var customChoiceInput =document.getElementById('customchoice');
+		customChoiceInput.setAttribute('required','');
+	}
+	
+	function choiceClicked()
+	{
+		var customChoiceInput =document.getElementById('customchoice');
+		customChoiceInput.removeAttribute('required');
+	}	
+	
+	function deletePoll(){
+		
+		if(confirm('Are you sure you would like to delete this poll? YOU CANNOT REVERT THIS ACTION'))
+		{
+			ajaxFunctions.ajaxRequest('DELETE', '/poll?id=<%= (poll && poll._id) %>', function (data) {
+		        window.location.replace(window.location.protocol + "//" + window.location.host + '/home');
+		      });
 		}
+		
+	}
 
 
   var data =<%- JSON.stringify(poll)%>;
@@ -92,17 +105,21 @@
   var chartData=data.choices.map(function(c){
   	return c.votecount
   });
+  
   var dataLabel= data.choices.map(function(c) {return c.choice;})
   var dataColor=data.choices.map(function(c){
   	return 'rgb(' + Math.floor(Math.random()*255) + ',' + Math.floor(Math.random()*255) + ',' +Math.floor(Math.random()*255) + ')'; 
   })
 
   	var ctx = document.getElementById("votes-chart");
-Chart.defaults.global.legend.position='bottom';
+	Chart.defaults.global.legend.position='bottom';
   	var chartInstance = new Chart(ctx, {
-    type: 'pie',
-    data:{ datasets:[{data:chartData,backgroundColor:dataColor, label:'Vote'}],
-    		labels:dataLabel}
+									    type: 'pie',
+									    data:{ datasets:[{
+												    	data:chartData,
+												   		backgroundColor:dataColor, 
+												   		label:'Vote'}],
+									    		labels:dataLabel}
 	});
   </script>
   
