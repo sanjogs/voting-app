@@ -17,7 +17,17 @@
            <ul class="nav navbar-nav navbar-right">
             
             <% if (isLoggedIn) { %>
-            <li><a href='/logout'>Logout</strong></a>
+              <li id="login-dropdown-list" class="dropdown">
+            		<a class="dropdown-toggle" href='#' data-toggle="dropdown" >
+            			<%= userName%>
+            			<b class="caret"></b>
+            		</a>
+            		<ul class="dropdown-menu">
+            	    <li><a href='/logout'><i class='fa fa-sign-out fa-fw'></i>Logout</a></li>
+            		</div>
+            	</li>
+          
+           
            
             <% } else {%>
             <li><a href='/auth/github'>
