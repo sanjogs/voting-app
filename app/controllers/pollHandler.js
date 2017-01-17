@@ -35,21 +35,6 @@ function PollHandler() {
         });
 
     };
-
-    //vote for a poll
-    this.vote = function(pollid, voterip) {
-
-    };
-
-    //create a poll
-    this.savePoll = function(question, user) {
-
-    };
-
-    //create poll choice
-    this.saveChoice = function(poll, choice) {
-
-    };
 }
 
 module.exports = PollHandler;
