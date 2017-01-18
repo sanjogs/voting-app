@@ -1,9 +1,9 @@
-*Free Code Camp Voting App Project*
+**Voting App **
 
-https://www.freecodecamp.com/challenges/build-a-voting-app
+This project is a part of free codecamp's backend certification assignment
 
 
 
-This was cloned from freecodecamp version of clementinejs with lot of modifications made afterwards.
+Originally cloned from freecodecamp version of clementinejs 
 
 https://github.com/johnstonbl01/clementinejs-fcc
