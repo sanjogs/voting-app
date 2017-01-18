@@ -1,6 +1,6 @@
 **Voting App**
 
-This project is a part of <a href='https://www.freecodecamp.com/challenges/build-a-voting-app'>free codecamp's backend certification assignment</a>
+Project done for FreeCodeCamp Backend Certification Assignment : <a href='https://www.freecodecamp.com/challenges/build-a-voting-app'>Build a Voting App</a>
 
 
 
